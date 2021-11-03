@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FreeCell</title>
+  <link rel="stylesheet" href="CSS/all.css">
+  <script src="https://kit.fontawesome.com/ef0a5b9138.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="home"></div>
+  <div class="alert">
+    <img src="img/alert.svg" alt="alert">
+    <p class="alert_message"></p>
+    <ul>
+      <li><button class="yes"></button></li>
+      <li><button class="no"></button></li>
+    </ul>
+
+  </div>
+  <div class="game_info">
+    <div><img src="img/logo.svg" class="logo" alt="logo"></div>
+    <div class="player_record">
+      <ul>
+        <li><i class="far fa-clock"></i></li>
+        <li class="timer"></li>
+      </ul>
+      <ul>
+        <li class="movement"></li>
+        <li>Moves</li>
+      </ul>
+    </div>
+  </div>
+  <div class="deck">
+    <div class="top_deck">
+      <div id="cel0" class="cell"><div class="cell_background"></div></div>
+      <div id="cel1" class="cell"><div class="cell_background"></div></div>
+      <div id="cel2" class="cell"><div class="cell_background"></div></div>
+      <div id="cel3" class="cell"><div class="cell_background"></div></div>
+      <div id="fou0" class="foundation"><div class="foundation_background">A</div></div>
+      <div id="fou1" class="foundation"><div class="foundation_background">A</div></div>
+      <div id="fou2" class="foundation"><div class="foundation_background">A</div></div>
+      <div id="fou3" class="foundation"><div class="foundation_background">A</div></div>
+    </div>
+    <div class="bot_deck">
+      <div id="cas0" class="cascade"></div>
+      <div id="cas1" class="cascade"></div>
+      <div id="cas2" class="cascade"></div>
+      <div id="cas3" class="cascade"></div>
+      <div id="cas4" class="cascade"></div>
+      <div id="cas5" class="cascade"></div>
+      <div id="cas6" class="cascade"></div>
+      <div id="cas7" class="cascade"></div>
+    </div>
+  </div>
+  <div class="menu">
+    <ul>
+      <li class="new_game"><img id="new_game" src="img/new_game.svg" alt="new_game"></li>
+      <li class="restart"><img id="restart" src="img/restart.svg" alt="restart"></li>
+      <li class="undo"><img id="undo" src="img/undo.svg" alt="undo"></li>
+    </ul>
+  </div>
+  <script src="JS/all.js"></script>
+</body>
+</html>
