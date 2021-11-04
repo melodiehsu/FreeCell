@@ -247,6 +247,7 @@ function render() {
 }
 
 function cardMouseDown(e) {
+  console.log(e);
   let cardData = e.target.data;
 
   let draggableCount = getDraggableNum(cardData);
@@ -261,6 +262,7 @@ function cardMouseDown(e) {
   cardsInHand.startX = e.offsetX;
   cardsInHand.startY = e.offsetY;
 
+  
   record = JSON.parse(JSON.stringify(cardsInHand));
 
   e.preventDefault();
@@ -282,7 +284,6 @@ function deckMouseUp(e) {
   let targetLocation = getCollidedLocation(cardData);
 
   if (targetLocation !== '') {
-    console.log('deckMouseUp');
     moveCardTo(cardData, targetLocation);
     checkGameStatus();
     changeUndoButtonSrc();
@@ -370,10 +371,50 @@ function undo() {
 
 function checkGameStatus() {
   if (!isGameStarted) {
-    console.log('checkGameStatus');
     isGameStarted = true;
     startTimer();
   }
+
+  let canAutoMove;
+  do {
+    canAutoMove = false;
+    let cardData;
+    for (let i = 0; i < cascades.length; i++) {
+      if (cascades[i].length == 0) {
+        continue;
+      }
+      cardData = cascades[i][cascades[i].length - 1];
+      record = {
+        cards: [cardData],
+        from: `cas${i}`,
+      };
+      for (let j = 0; j < foundations.length; j++) {
+        if (findCard(cardData) == (`cas${i}` || `cel${j}`)) {
+          if (moveCardTo(cardData, `fou${j}`)) {
+            canAutoMove = true;
+          }
+        }
+      }
+    }
+    for (let i = 0; i < cells.length; i++) {
+      if (cells[i].length == 0) {
+        continue;
+      }
+      cardData = cells[i][0];
+      record = {
+        cards: [cardData],
+        from: `cas${i}`,
+      };
+      for (let j = 0; j < foundations.length; j++) {
+        if (findCard(cardData) == `cas${i}` || `cel${j}`) {
+          if (moveCardTo(cardData, `fou${j}`)) {
+            canAutoMove = true;
+          }
+        }
+      }
+    }
+  }
+  while (canAutoMove == true);
 
   if(isWon()){
     isGameStarted = false;
@@ -381,7 +422,6 @@ function checkGameStatus() {
     createWinningWindow();
     history = [];
     changeUndoButtonSrc();
-    console.log('win!')
   }
 }
 
@@ -706,10 +746,13 @@ function goToCells(cardData, cellNum) {
     history.push(record);
     movementCount++;
     renderMovements();
+
+    return true;
   }
   
   else {
     returnCards();
+    return false;
   }
 }
 
@@ -723,10 +766,14 @@ function goToFoundations(cardData, fNum) {
     history.push(record);
     movementCount++;
     renderMovements();
+
+    return true;
   }
 
   else {
     returnCards();
+
+    return false;
   }
 }
 
@@ -736,7 +783,7 @@ function stackingCards(cardData, casNum) {
   let availableCell = 0;
 
   for (let i = 0; i < cascades.length; i++) {
-    if (cascades[i].length == 0 && i !== casNum) {
+    if (cascades[i].length == 0 && i !== (casNum || cardsInHand.from)) {
       availableCas++
     }
   }
@@ -762,6 +809,8 @@ function stackingCards(cardData, casNum) {
     history.push(record);
     movementCount++;
     renderMovements();
+
+    return true
   }
   
   // 卡片移到別堆卡片上
@@ -775,10 +824,14 @@ function stackingCards(cardData, casNum) {
       history.push(record);
       movementCount++;
       renderMovements();
+
+      return true;
     }
 
     else{
       returnCards();
+      return false;
+
     }
   }
 }
@@ -786,14 +839,24 @@ function stackingCards(cardData, casNum) {
 // 指定卡片移動至本位欄框、空白欄框或堆疊卡片
 function moveCardTo(cardData, location) {
   if (location.startsWith('cel')) {
-    goToCells(cardData, location[3])
+    if (goToCells(cardData, location[3])) {
+      return true;
+    }
   }
 
   if (location.startsWith('fou')) {
-    goToFoundations(cardData, location[3])
+    if (goToFoundations(cardData, location[3])) {
+      return true;
+    }
   }
 
   if (location.startsWith('cas')) {
-    stackingCards(cardData, location[3])
+    if (stackingCards(cardData, location[3])) {
+      return true;
+    }
+  }
+
+  else{
+    return false;
   }
 }
