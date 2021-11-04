@@ -340,17 +340,12 @@ function removeWinningWindow() {
 }
 
 function isWon() {
-  let gameResult;
-  foundations.forEach(arr => {
-    if (arr.length == 13) {
-      gameResult = true;
+  for (let i = 0; i < foundations.length - 1; i++) {
+    if (foundations[i].length !== 13) {
+      return false;
     }
-    else{
-      isGameStarted = true;
-      gameResult = false;
-    }
-  });
-  return gameResult;
+  }
+  return true;
 }
 
 // 上一步
@@ -509,9 +504,9 @@ function getCollidedLocation(cardData) {
 // 卡片在畫面上的位置
 // let animationMap = new Map();
 function cardPosition(cardElement, top, left, zIndex) {
-  // if (cardElement.style.top == top && cardElement.style.left == left) {
-  //   return;
-  // }
+  if (cardElement.style.top == top && cardElement.style.left == left) {
+    return;
+  }
 
   // clearTimeout(animationMap.get(cardElement.id));
 
