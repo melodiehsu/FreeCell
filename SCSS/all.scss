@@ -195,4 +195,10 @@ button{
 
 .card{
   position: absolute;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.moveAnimation{
+  transition: top .2s, left .2s;
 }
