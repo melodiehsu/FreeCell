@@ -202,13 +202,12 @@ function startAGame() {
     CARD_ARR[i % 8].push(cards[i]);
     let element = document.querySelector(`#${cards[i].name}`);
     let zIndex = Math.ceil((i+1) / 8);
-    cardPosition(element, '100%', '50%', zIndex);
+    cardPosition(element, '100%', '50%', zIndex, false);
   }
 
   cascades = CARD_ARR;
 
   render();
-  console.log(cascades);
 }
 
 // 重發這一局牌
@@ -242,12 +241,11 @@ function render() {
 
   for (let i = 0; i < cardsInHand.cards.length; i++) {
     let cardElement = document.querySelector(`#${cardsInHand.cards[i].name}`);
-    placingCard(cardElement, `hand`, i + 1)
+    placingCard(cardElement, `han`, i + 1)
   }
 }
 
 function cardMouseDown(e) {
-  console.log(e);
   let cardData = e.target.data;
 
   let draggableCount = getDraggableNum(cardData);
@@ -541,30 +539,39 @@ function getCollidedLocation(cardData) {
   return '';
 }
 
-// 卡片在畫面上的位置
-// let animationMap = new Map();
-function cardPosition(cardElement, top, left, zIndex) {
-  if (cardElement.style.top == top && cardElement.style.left == left) {
-    return;
-  }
 
-  // clearTimeout(animationMap.get(cardElement.id));
+// 卡片在畫面上的位置
+let animationMap = new Map();
+function cardPosition(cardElement, top, left, zIndex, moveAnimation) {
+  // if (cardElement.style.top == top && cardElement.style.left == left) {
+  //   return;
+  // }
+
+  clearTimeout(animationMap.get(cardElement.id));
 
   cardElement.style.top = top;
   cardElement.style.left = left;
   cardElement.style.zIndex = zIndex;
 
-  // let id = setTimeout(function() {
-  //   card.style.zIndex = zIndex;
-  // }, 500);
-  // animationMap.set(card.id, id);
+  if (moveAnimation) {
+    cardElement.classList.add('moveAnimation');
+  }
+
+  let id = setTimeout(function() {
+    cardElement.style.zIndex = zIndex;
+    if (moveAnimation) {
+      cardElement.classList.remove('moveAnimation');
+    }
+  }, 500);
+
+  animationMap.set(cardElement.id, id);
 }
 
 // 將卡片放到指定位置
 function placingCard(cardElement, location, zIndex) {
   let destination;
   let cardInterval;
-  if (location == 'hand') {
+  if (location == 'han') {
     destination = {
       offsetTop: window.event.clientY - cardsInHand.startY,
       offsetLeft: window.event.clientX - cardsInHand.startX,
@@ -580,12 +587,12 @@ function placingCard(cardElement, location, zIndex) {
   let top = destination.offsetTop + (Math.round(cardInterval * cardElement.offsetHeight) * (zIndex - 1));
   let left = destination.offsetLeft;
 
-  if (location == 'hand') {
-    cardPosition(cardElement, `${top}px`, `${left}px`, zIndex + 50);
+  if (location == 'han') {
+    cardPosition(cardElement, `${top}px`, `${left}px`, zIndex + 50, false);
   }
   
   else {
-    cardPosition(cardElement, `${top}px`, `${left}px`, zIndex);
+    cardPosition(cardElement, `${top}px`, `${left}px`, zIndex, true);
   }
 }
 
@@ -783,7 +790,7 @@ function stackingCards(cardData, casNum) {
   let availableCell = 0;
 
   for (let i = 0; i < cascades.length; i++) {
-    if (cascades[i].length == 0 && i !== (casNum || cardsInHand.from)) {
+    if (cascades[i].length == 0 && i !== (casNum && cardsInHand.from)) {
       availableCas++
     }
   }
